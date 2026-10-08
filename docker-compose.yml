@@ -1,0 +1,159 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: contracts
+      POSTGRES_PASSWORD: contracts_pw
+      POSTGRES_DB: contracts
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      # Host 5432 is occupied on this machine; container port unchanged so
+      # in-stack DATABASE_URL (postgres:5432) keeps working.
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U contracts -d contracts"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.1  # >=1.10 required: query_points API used by qdrant-client 1.12
+    ports:
+      - "6333:6333"
+    volumes:
+      # Reuses the pre-existing legal-project volume (holds semantic_objects,
+      # dbg_eval, phase16-ablation-v1). Declared external below: never created
+      # nor deleted by Compose.
+      - qdrant-phase6:/qdrant/storage
+
+  # NOTE (2026-10-06): minio/minio is no longer published on Docker Hub
+  # (repository "object not found") and Quay pulls require authentication,
+  # which is unavailable here. Service DISABLED until a verified image
+  # reference is obtainable. Harmless: STORAGE_BACKEND=local, so documents
+  # land on local disk, not MinIO. To restore: uncomment and set image to
+  # a verified official MinIO reference.
+  # minio:
+  #   image: minio/minio:RELEASE.2024-06-13T22-53-53Z
+  #   command: server /data --console-address ":9001"
+  #   environment:
+  #     MINIO_ROOT_USER: minioadmin
+  #     MINIO_ROOT_PASSWORD: minioadmin
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   volumes:
+  #     - miniodata:/data
+
+  # Part 2: contract DISCOVERY search (filename/fuzzy). Deliberately separate
+  # from Qdrant, which stays the SEMANTIC (clause meaning) search backend —
+  # see the target architecture in the Part 2 spec.
+  # Version pinned explicitly to a stable 8.17.x release (8.17.0) matched to
+  # the official Python client elasticsearch==8.17.1.
+  elasticsearch:
+    image: elasticsearch:8.17.0
+    environment:
+      - discovery.type=single-node          # single-node local dev cluster
+      - xpack.security.enabled=false        # local dev only: no auth on 9200
+      - xpack.security.http.ssl.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m      # cap the heap; small local dataset
+      - cluster.routing.allocation.disk.watermark.low=95%
+      - cluster.routing.allocation.disk.watermark.high=98%
+      - cluster.routing.allocation.disk.watermark.flood_stage=99%
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      # Bound to loopback only: debugging/CLI access from THIS machine, not a
+      # public service. In-stack clients use http://elasticsearch:9200.
+      - "127.0.0.1:9200:9200"
+    volumes:
+      # Named volume: the index survives restarts (no ephemeral index).
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=2s' >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 30s
+
+  backend:
+    build: ./backend
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://contracts:contracts_pw@postgres:5432/contracts
+      STORAGE_DIR: /data/storage
+      # Part 2: contract discovery index (PostgreSQL stays source of truth).
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    volumes:
+      - ./backend:/code
+      - storedata:/data/storage
+    ports:
+      # Host 8000 belongs to the unrelated ecommerce project when it runs;
+      # container port stays 8000, host mapping uses verified-free 8001.
+      - "8001:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      # service_started (NOT service_healthy): a slow/failed Elasticsearch
+      # must never prevent the API from booting — search degrades to an
+      # explicit 503 instead.
+      elasticsearch:
+        condition: service_started
+
+  worker:
+    build: ./backend
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://contracts:contracts_pw@postgres:5432/contracts
+      STORAGE_DIR: /data/storage
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    volumes:
+      - ./backend:/code
+      - storedata:/data/storage
+    command: python -m app.worker.worker
+    depends_on:
+      backend:
+        condition: service_started
+      redis:
+        condition: service_started
+      elasticsearch:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      # NEXT_PUBLIC_* is inlined at build time, so it must be passed as a
+      # build arg — the runtime `environment:` value alone is not enough.
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8001
+    ports:
+      - "3000:3000"
+    environment:
+      # Browser-consumed: must be the host-mapped backend port, never backend:8000.
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  # Part 2: Elasticsearch index storage. Named volume → the versioned
+  # physical index (contract_search_v<N>, alias contract_search) survives
+  # container restarts.
+  esdata:
+  # Pre-existing legal-project Qdrant storage. External: Compose neither
+  # creates nor deletes it (DO NOT remove: holds retrieval collections).
+  qdrant-phase6:
+    external: true
+  miniodata:
+  storedata:

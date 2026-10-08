@@ -1,0 +1,15 @@
+# Keep the backend image lean: large ML artifacts/datasets are provided at
+# runtime via the ./backend:/code bind mount in docker-compose.yml, so they
+# must NOT be baked into the image (COPY . . would add ~15GB and exhaust
+# disk during export). Model loading reads the mounted paths.
+ml_artifacts/
+mlruns/
+ml/data/
+__pycache__/
+*.pyc
+.pytest_cache/
+tests/
+storage/
+*.db
+*.log
+.DS_Store

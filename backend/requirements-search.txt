@@ -1,0 +1,9 @@
+# Part 2: contract discovery search (Elasticsearch).
+# Kept in its own file so the heavy Phase 1-6 dependency layer (torch,
+# transformers, mlflow, ...) stays cached in the image and is not re-downloaded
+# when only the search client changes.
+#
+# Server: elasticsearch:8.17.0 (docker-compose.yml). The official Python
+# client is version-matched to the server's minor line (8.17.x): a client from
+# a different major/minor may speak an API the server does not implement.
+elasticsearch==8.17.1

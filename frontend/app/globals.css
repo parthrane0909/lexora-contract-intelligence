@@ -1,0 +1,379 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Contract Intelligence — global design tokens (Phase 9)
+   Warm cream paper · charcoal ink · deep burgundy accents · restrained gold.
+   The `--brand-*` ramp mirrors tailwind.config.js `colors.brand` so component
+   CSS written by hand and Tailwind utilities stay visually identical.
+--------------------------------------------------------------------------- */
+:root {
+  --brand-900: #420c17;
+  --brand-800: #5c1220;
+  --brand-700: #701826;
+  --brand-600: #8a2333;
+  --brand-500: #a13b4a;
+  --brand-300: #d5949b;
+  --brand-200: #e9bfc2;
+  --brand-100: #f4dedf;
+  --brand-50: #fbf1f0;
+
+  --gold-700: #7a5c25;
+  --gold-500: #b08d3f;
+  --gold-200: #e9d7a6;
+  --gold-100: #f4ead0;
+
+  --ink: #1c1917;
+  --ink-soft: #4b463f;
+  --ink-mute: #78716c;
+  --paper: #fffdf8;
+  --wash: #f5f0e6;
+  --line: #e7e0d2;
+  --line-soft: #efe9dd;
+  --line-strong: #d9d0be;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--wash);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+/* Editorial display type ---------------------------------------------------- */
+.font-serif,
+h1.font-serif,
+h2.font-serif,
+h3.font-serif {
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.lede {
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.65;
+  max-width: 62ch;
+}
+
+/* Surfaces ------------------------------------------------------------------ */
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0.875rem;
+  box-shadow: 0 1px 2px rgba(28, 25, 23, 0.04);
+}
+
+.card-hover {
+  transition: box-shadow 0.22s ease, transform 0.22s ease,
+    border-color 0.22s ease;
+}
+.card-hover:hover {
+  border-color: var(--line-strong, #d9d0be);
+  box-shadow: 0 18px 40px -28px rgba(28, 25, 23, 0.45);
+  transform: translateY(-2px);
+}
+
+.hairline {
+  border-color: var(--line);
+}
+
+/* Buttons ------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 0.55rem 1rem;
+  transition: background-color 0.18s ease, color 0.18s ease,
+    border-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
+  white-space: nowrap;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--brand-800);
+  color: #fff;
+  box-shadow: 0 10px 24px -18px rgba(66, 12, 23, 0.9);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--brand-900);
+}
+
+.btn-secondary {
+  background: var(--paper);
+  border: 1px solid var(--line-strong, #d9d0be);
+  color: var(--ink);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--wash);
+  border-color: var(--brand-300);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid transparent;
+}
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(28, 25, 23, 0.05);
+  color: var(--ink);
+}
+
+.btn-gold {
+  background: linear-gradient(180deg, #c9a551 0%, var(--gold-500) 100%);
+  color: #2b2110;
+  box-shadow: 0 10px 26px -18px rgba(122, 92, 37, 0.95);
+}
+.btn-gold:hover:not(:disabled) {
+  filter: brightness(1.04);
+}
+
+.btn-danger {
+  background: var(--brand-700);
+  color: #fff;
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--brand-900);
+}
+
+.btn-sm {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8125rem;
+}
+
+/* Forms --------------------------------------------------------------------- */
+.field {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--line-strong, #d9d0be);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--ink);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+.field::placeholder {
+  color: var(--ink-mute);
+}
+.field:hover:not(:disabled) {
+  border-color: var(--brand-300);
+}
+.field:focus {
+  outline: none;
+  border-color: var(--brand-600);
+  box-shadow: 0 0 0 3px rgba(138, 35, 51, 0.14);
+}
+.field:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+select.field {
+  appearance: none;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2378716c' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-bottom: 0.3rem;
+}
+
+/* Data table ---------------------------------------------------------------- */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+}
+.table thead th {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: #faf7f0;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.table tbody td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--line-soft, #efe9dd);
+  vertical-align: middle;
+}
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+.table tbody tr {
+  transition: background-color 0.16s ease;
+}
+.table tbody tr:hover {
+  background: #fbf8f2;
+}
+
+/* Badges / chips ------------------------------------------------------------ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--line-strong, #d9d0be);
+  background: var(--paper);
+  border-radius: 999px;
+  padding: 0.25rem 0.35rem 0.25rem 0.7rem;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+/* Loading ------------------------------------------------------------------- */
+.ui-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--line-strong, #d9d0be);
+  border-top-color: var(--brand-700);
+  border-radius: 9999px;
+  animation: ui-spin 0.8s linear infinite;
+}
+@keyframes ui-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #efe9dd 0%, #f7f2e8 50%, #efe9dd 100%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 0.375rem;
+}
+
+/* Focus visibility ---------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--brand-700);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Top navigation ------------------------------------------------------------ */
+.topnav {
+  background: rgba(255, 253, 248, 0.92);
+  backdrop-filter: saturate(140%) blur(8px);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.topnav a {
+  padding: 0.35rem 0.15rem;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-soft);
+  transition: color 0.16s ease, border-color 0.16s ease;
+}
+.topnav a:hover {
+  color: var(--brand-800);
+}
+.topnav a.active {
+  color: var(--brand-800);
+  border-bottom-color: var(--gold-500);
+  font-weight: 600;
+}
+
+/* Dialog -------------------------------------------------------------------- */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 25, 23, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 60;
+}
+
+/* Toast --------------------------------------------------------------------- */
+.toast {
+  background: var(--ink);
+  color: #fdfbf6;
+  border-radius: 0.6rem;
+  box-shadow: 0 24px 48px -24px rgba(28, 25, 23, 0.6);
+  padding: 0.7rem 0.95rem;
+  font-size: 0.875rem;
+}
+
+/* Section reveal (Phase 8 motion) ------------------------------------------ */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

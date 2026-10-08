@@ -1,0 +1,10 @@
+# Keep the image build context small and deterministic: the container runs
+# `npm install` from package*.json, so host-installed dependencies and any
+# local build/dev artefacts must never be baked into the image.
+node_modules
+.next
+out
+npm-debug.log*
+Dockerfile
+.dockerignore
+.git

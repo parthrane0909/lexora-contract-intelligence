@@ -1,0 +1,125 @@
+# ==========================================
+# ENVIRONMENT VARIABLES & SECRETS
+# ==========================================
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# ==========================================
+# PYTHON
+# ==========================================
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+dist/
+build/
+
+# ==========================================
+# NEXT.JS / NODE.JS
+# ==========================================
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==========================================
+# LOCAL STORAGE & UPLOADS
+# ==========================================
+storage/
+uploads/
+tmp/
+temp/
+
+# ==========================================
+# MACHINE LEARNING ARTIFACTS
+# ==========================================
+mlruns/
+ml_artifacts/
+ml/data/
+checkpoints/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# ==========================================
+# DATABASE FILES & BACKUPS
+# ==========================================
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+*.backup
+postgres_data/
+redis_data/
+esdata/
+qdrant_storage/
+
+# ==========================================
+# LOGS
+# ==========================================
+*.log
+logs/
+
+# ==========================================
+# TEST & TOOL ARTIFACTS
+# ==========================================
+playwright-report/
+test-results/
+coverage/
+.nyc_output/
+.cache/
+
+# ==========================================
+# EDITOR & OPERATING SYSTEM
+# ==========================================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python virtual environments
+.venv/
+venv/
+backend/.venv/
+backend/venv/
+**/.venv/
+**/venv/
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated ML datasets
+backend/ml/data/
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Python virtual environments
+.venv/
+venv/

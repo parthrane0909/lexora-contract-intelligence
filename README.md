@@ -620,6 +620,8 @@ deterministic fake-provider validator tests).
 
 ## Disclaimer
 
-Assists human review; does not provide legal advice. Risk findings in later
+Assists human review and does not provide legal advice. Risk findings in later
 phases are flagged as potential concerns / policy deviations, never claims of
 illegality (spec §8).
+
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/ef293366-e4a2-4483-af84-63c4e09d66ba" />
